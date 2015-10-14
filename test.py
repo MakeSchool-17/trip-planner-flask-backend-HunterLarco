@@ -4,21 +4,20 @@ import server
 
 
 
-class Test(db.Model):
-  
-  value1 = db.JsonProperty()
-  value2 = db.JsonProperty()
-
-
 
 
 def TestKeysandIds():
+  class Test(db.Model):
+  
+    value1 = db.TextProperty()
+    value2 = db.TextProperty()
+  
   entity = Test()
   entity.value1 = 'Test'
   entity.put()
   print(entity)
 
-  print(entity.__json__())
+  print(entity.packed())
   print(entity.value1)
   print(Test.value1)
 
@@ -33,7 +32,7 @@ def TestKeysandIds():
   entity = key.get()
   print(entity)
 
-  print(entity.__json__())
+  print(entity.packed())
   print(entity.value1)
   print(Test.value1)
 
@@ -48,28 +47,29 @@ def TestKeysandIds():
   print(db.Model.__subclasses__())
 
   entity = Test(id=key.id)
+  entity.value3 = 4
+  entity.put()
   print(entity)
 
-  print(entity.__json__())
+  print(entity.packed())
   print(entity.value3)
 
 
   print(key.serialize())
   entity = db.Key(serial=key.serialize()).get()
   print(entity)
-  print(entity.__json__())
+  print(entity.packed())
 
   entity.delete()
 
+  # should throw error
   entity = Test(id=key.id)
-  print(entity)
-  print(entity.__json__())
   
 
 
 class Reference(db.Model):
-  value1 = db.Property()
-  value2 = db.Property()
+  value1 = db.TextProperty()
+  value2 = db.BooleanProperty()
   other = db.KeyProperty()
 
 
@@ -90,13 +90,14 @@ def TestPropertyPacking():
 
   print('Second Entity Key  : %s' % entity2.key)
   
-  print('First Entity JSON  : %s' % entity.__json__())
-  print('Second Entity JSON : %s' % entity2.__json__())
+  print('First Entity JSON  : %s' % entity.packed())
+  print('Second Entity JSON : %s' % entity2.packed())
 
 
 
 
 if __name__ == '__main__':
+  db.start_development_server()
   # TestKeysandIds()
   TestPropertyPacking()
   
