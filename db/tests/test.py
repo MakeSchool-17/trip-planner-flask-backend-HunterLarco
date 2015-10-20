@@ -9,12 +9,12 @@ import server
 def TestKeysandIds():
   class Test(db.Model):
   
-    value1 = db.TextProperty()
-    value2 = db.TextProperty()
+    value1 = db.StringProperty()
+    value2 = db.StringProperty()
   
   entity = Test()
   entity.value1 = 'Test'
-  entity.put()
+  entity.save()
   print(entity)
 
   print(entity.packed())
@@ -48,7 +48,7 @@ def TestKeysandIds():
 
   entity = Test(id=key.id)
   entity.value3 = 4
-  entity.put()
+  entity.save()
   print(entity)
 
   print(entity.packed())
@@ -68,7 +68,7 @@ def TestKeysandIds():
 
 
 class Reference(db.Model):
-  value1 = db.TextProperty()
+  value1 = db.StringProperty()
   value2 = db.BooleanProperty()
   other = db.KeyProperty()
 
@@ -78,7 +78,7 @@ def TestPropertyPacking():
   entity = Reference()
   entity.value1 = 'E1V1'
   entity.value2 = True
-  entity.put()
+  entity.save()
   
   print('First Entity Key   : %s' % entity.key)
   
@@ -86,7 +86,7 @@ def TestPropertyPacking():
   entity2.value1 = 'E2V1'
   entity2.value2 = False
   entity2.other = entity.key
-  entity2.put()
+  entity2.save()
 
   print('Second Entity Key  : %s' % entity2.key)
   
