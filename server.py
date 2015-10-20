@@ -17,6 +17,33 @@ api = Api(app)
 
 
 """ DECORATORS """
+def auth(f):
+  """
+  ' PURPOSE
+  '   Forces a given request to contain a valid Basic Authorization
+  '   header using the UserModel as the auth database check.
+  ' NOTES
+  '   1. Adds an additional kwarg ( current_user ) which contains the
+  '      entity of the current user based on the Basic Auth.
+  """
+  def handle(*args, **kwargs):
+    basic = request.authorization
+    if not basic: return abort(401)
+    
+    email = basic.username
+    password = basic.password
+    
+    users = UserModel.fetch(UserModel.email == email)
+    if len(users) == 0: return abort(401)
+    
+    user = users[0]
+    if not user.check_password(password): return abort(401)
+    
+    kwargs['current_user'] = user
+    
+    return f(*args, **kwargs)
+  return handle
+
 def parameters(*params):
   """
   ' PURPOSE
@@ -50,8 +77,8 @@ def parameters(*params):
 class Users(Resource):
   """
   ' PURPOSE
-  '   Contains methods that pertain to the entire user database.
-  '   No users are specified in any of the requests.
+  '   Contains methods that pertain to the entire user database
+  '   as well as specific users via the auth decorator.
   """
   
   @parameters('email', 'password')
@@ -71,27 +98,18 @@ class Users(Resource):
     user.set_password(password)
     user.save()
     return { 'id': user.key.id }
-
-
-class SpecificUser(Resource):
-  """
-  ' PURPOSE
-  '   Contains methods that pertain a specific user.
-  """
   
-  def get(self, id):
+  @auth
+  def get(self, current_user=None):
     """
     ' PURPOSE
-    '   Given a user id, return a dict representing
-    '   that user's public data.
+    '   Return a dict representing the current user's public data.
     ' PARAMETERS
-    '   <str id>
+    '   optional <UserModel current_user>
     ' RETURNS
     '   dict *see the UserModel for specs*
     """
-    entity = UserModel.get_by_id(id)
-    if not entity: return abort(400)
-    return entity.to_dict()
+    return current_user.to_dict()
 
 
 class Trips(Resource):
@@ -185,7 +203,6 @@ api.add_resource(Trips, '/trips/')
 api.add_resource(SpecificTrip, '/trips/<string:id>/')
 
 api.add_resource(Users, '/users/')
-api.add_resource(SpecificUser, '/users/<string:id>/')
 
 
 """ CUSTOM JSON SERIALIZER FOR flask_restful """

@@ -1,3 +1,7 @@
+""" GLOBAL IMPORTS """
+import bcrypt
+
+
 """ LOCAL IMPORTS """
 import db
 
@@ -24,7 +28,6 @@ class UserModel(db.Model):
     ' RETURNS
     '   <bytes hashed>
     """
-    import bcrypt
     password = password.encode('utf-8')
     hashed = bcrypt.hashpw(password, bcrypt.gensalt(self.BCRYPT_ROUNDS))
     return hashed
@@ -53,6 +56,7 @@ class UserModel(db.Model):
     '   True if the passwords match
     '   False if th passwords do not match
     """
+    password = password.encode('utf-8')
     return bcrypt.hashpw(password, self.password) == self.password
   
   def to_dict(self):
