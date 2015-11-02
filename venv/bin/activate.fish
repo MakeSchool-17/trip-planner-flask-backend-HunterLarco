@@ -32,7 +32,7 @@ end
 # unset irrelevant variables
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/Larco/Documents/Github/Make_School_Projects/Trip_Planner_Backend/development"
+set -gx VIRTUAL_ENV "/Users/Larco/Documents/Github/Make_School_Projects/Trip_Planner_Backend/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

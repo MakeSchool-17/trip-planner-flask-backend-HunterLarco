@@ -39,7 +39,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/Larco/Documents/Github/Make_School_Projects/Trip_Planner_Backend/development"
+VIRTUAL_ENV="/Users/Larco/Documents/Github/Make_School_Projects/Trip_Planner_Backend/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
