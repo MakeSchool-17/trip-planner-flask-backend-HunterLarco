@@ -145,7 +145,7 @@ class Trips(Resource):
     ' RETURNS
     '   [<dict entity1>, ..., <dict entityN>]
     """
-    entities = TripModel.fetch()
+    entities = TripModel.query()
     return [entity.to_dict() for entity in entities]
   
   # returns amount of deleted

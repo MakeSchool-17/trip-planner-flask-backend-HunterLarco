@@ -3,7 +3,7 @@ import bcrypt
 
 
 """ LOCAL IMPORTS """
-import db
+import TableMongo as db
 
 
 class UserModel(db.Model):
@@ -13,8 +13,8 @@ class UserModel(db.Model):
   """
   
   """ PROPERTIES """
-  email = db.StringProperty()
-  password = db.ByteStringProperty()
+  email = db.StringProperty(required=True)
+  password = db.ByteStringProperty(required=True)
   
   """ CONSTANTS """
   BCRYPT_ROUNDS = 12
@@ -72,7 +72,33 @@ class UserModel(db.Model):
     return {
       'email': self.email
     }
+
+
+class Coordinate(object):
+  
+  def __init__(self, x=0, y=0):
+    self.x = 0
+    self.y = 0
+  
+  def __repr__(self):
+    return self.__str__()
+  
+  def __str__(self):
+    return 'Coordinate(x=%s, y=%s)' % (self.x, self.y)
+
     
+class CoordinateProperty(db.Property):
+  
+  @staticmethod
+  def type():
+    return Coordinate
+  
+  def pack(self, value):
+    return [value.x, value.y]
+  
+  def unpack(self, value):
+    return Coordinate(value[0], value[1])
+
 
 class TripModel(db.Model):
   """
@@ -81,8 +107,9 @@ class TripModel(db.Model):
   """
   
   """ PROPERTIES """
-  name = db.StringProperty()
-  author = db.KeyProperty()
+  name = db.StringProperty(required=True)
+  author = db.KeyProperty(required=True)
+  waypoints = CoordinateProperty(multiple=True, default=[])
   
   def to_dict(self):
     """
@@ -97,5 +124,6 @@ class TripModel(db.Model):
     """
     return {
       'name': self.name,
-      'author': self.author.id
+      'author': self.author.id,
+      'waypoints': [{'x': waypoint.x, 'y': waypoint.y} for waypoint in self.waypoints]
     }
